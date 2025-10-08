@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Billing Software</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .header {
+            background: #badc57;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 5px solid #a0c947;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            color: #333;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .customer-details {
+            background: #badc57;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            align-items: end;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .form-group input {
+            padding: 10px;
+            border: 2px solid #999;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background: #535C68;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: #404950;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .category {
+            background: #f8f9fa;
+            border: 3px solid #badc57;
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .category h2 {
+            background: #badc57;
+            margin: -15px -15px 15px -15px;
+            padding: 15px;
+            border-radius: 7px 7px 0 0;
+            color: #333;
+        }
+
+        .product-item {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            align-items: center;
+            margin-bottom: 10px;
+            gap: 10px;
+        }
+
+        .product-item label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .product-item input {
+            width: 80px;
+            padding: 8px;
+            border: 2px solid #999;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 1em;
+        }
+
+        .bill-area {
+            background: #f8f9fa;
+            border: 3px solid #badc57;
+            border-radius: 10px;
+            padding: 15px;
+            min-height: 400px;
+        }
+
+        .bill-area h2 {
+            background: #535C68;
+            color: white;
+            margin: -15px -15px 15px -15px;
+            padding: 15px;
+            border-radius: 7px 7px 0 0;
+            text-align: center;
+        }
+
+        .bill-content {
+            background: white;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            max-height: 350px;
+            overflow-y: auto;
+        }
+
+        .totals-section {
+            background: #badc57;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .total-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .total-item label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .total-item input {
+            padding: 10px;
+            border: 2px solid #999;
+            border-radius: 5px;
+            font-weight: bold;
+            background: white;
+        }
+
+        .button-section {
+            background: #badc57;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            border-top: 3px solid #a0c947;
+        }
+
+        .button-section .btn {
+            padding: 15px 30px;
+            font-size: 1.1em;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 400px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content h3 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .customer-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛒 Billing Software</h1>
+        </div>
+
+        <div class="customer-details">
+            <div class="form-group">
+                <label>Customer Name:</label>
+                <input type="text" id="customerName" placeholder="Enter name">
+            </div>
+            <div class="form-group">
+                <label>Customer Phone:</label>
+                <input type="text" id="customerPhone" placeholder="Enter phone">
+            </div>
+            <div class="form-group">
+                <label>Bill Number:</label>
+                <input type="text" id="billNumber" readonly>
+            </div>
+            <div class="form-group">
+                <label>Search Bill:</label>
+                <input type="text" id="searchBill" placeholder="Enter bill number">
+            </div>
+            <button class="btn" onclick="searchBill()">Search</button>
+        </div>
+
+        <div class="main-content">
+            <div class="category">
+                <h2>💊 Medical Purpose</h2>
+                <div class="product-item">
+                    <label>Sanitizer</label>
+                    <input type="number" id="sanitizer" value="0" min="0">
+                </div>
+                <div class="product-item">
+                    <label>Mask</label>
+                    <input type="number" id="mask" value="0" min="0">
+                </div>
+                <div class="product-item">
+                    <label>Hand Gloves</label>
+                    <input type="number" id="handGloves" value="0" min="0">
+                </div>
+                <div class="product-item">
+                    <label>Syrup</label>
+                    <input type="number" id="syrup" value="0" min="0">
+                </div>
+                <div class="product-item">
+                    <label>Cream</label>
+                    <input type="number" id="cream" value="0" min="0">
+                </div>
+                <div class="product-item">
+                    <label>Thermal Gun</label>
+                    <input type="number" id="thermalGun" value="0" min="0">
+                </div>
+            </div>
+
+            <div class="category">
+                <h2>🛍️ Grocery Items</h2>
+                <div class="product-item">
+                    <label>Rice</label>
+                    <input type="number" id="rice" value="0" min="0">
+                </div>
+                <div class="product-item">
+                    <label>Food Oil</label>
+                    <input type="number" id="foodOil" value="0" min="0">
+                </div>
+                <div class="product-item">
+                    <label>Wheat</label>
+                    <input type="number" id="wheat" value="0" min="0">
+                </div>
+                <div class="product-item">
+                    <label>Spices</label>
+                    <input type="number" id="spices" value="0" min="0">
+                </div>
+                <div class="product-item">
+                    <label>Flour</label>
+                    <input type="number" id="flour" value="0" min="0">
+                </div>
+                <div class="product-item">
+                    <label>Maggi</label>
+                    <input type="number" id="maggi" value="0" min="0">
+                </div>
+            </div>
+
+            <div class="category">
+                <h2>🥤 Cold Drinks</h2>
+                <div class="product-item">
+                    <label>Sprite</label>
+                    <input type="number" id="sprite" value="0" min="0">
+                </div>
+                <div class="product-item">
+                    <label>Mineral Water</label>
+                    <input type="number" id="mineral" value="0" min="0">
+                </div>
+                <div class="product-item">
+                    <label>Juice</label>
+                    <input type="number" id="juice" value="0" min="0">
+                </div>
+                <div class="product-item">
+                    <label>Coke</label>
+                    <input type="number" id="coke" value="0" min="0">
+                </div>
+                <div class="product-item">
+                    <label>Lassi</label>
+                    <input type="number" id="lassi" value="0" min="0">
+                </div>
+                <div class="product-item">
+                    <label>Mountain Duo</label>
+                    <input type="number" id="mountainDuo" value="0" min="0">
+                </div>
+            </div>
+
+            <div class="bill-area">
+                <h2>📄 Bill Area</h2>
+                <div class="bill-content" id="billContent">
+	Welcome Grocery Retail
+Bill Number: 
+Customer Name: 
+Phone Number: 
+================================
+Products		QTY		Price
+                </div>
+            </div>
+        </div>
+
+        <div class="totals-section">
+            <div class="total-item">
+                <label>Total Medical Price</label>
+                <input type="text" id="medicalPrice" readonly value="Rs. 0.0">
+            </div>
+            <div class="total-item">
+                <label>Medical Tax</label>
+                <input type="text" id="medicalTax" readonly value="Rs. 0.0">
+            </div>
+            <div class="total-item">
+                <label>Total Grocery Price</label>
+                <input type="text" id="groceryPrice" readonly value="Rs. 0.0">
+            </div>
+            <div class="total-item">
+                <label>Grocery Tax</label>
+                <input type="text" id="groceryTax" readonly value="Rs. 0.0">
+            </div>
+            <div class="total-item">
+                <label>Total Cold Drinks Price</label>
+                <input type="text" id="coldDrinksPrice" readonly value="Rs. 0.0">
+            </div>
+            <div class="total-item">
+                <label>Cold Drinks Tax</label>
+                <input type="text" id="coldDrinksTax" readonly value="Rs. 0.0">
+            </div>
+        </div>
+
+        <div class="button-section">
+            <button class="btn" onclick="calculateTotal()">📊 Total</button>
+            <button class="btn" onclick="generateBill()">🧾 Generate Bill</button>
+            <button class="btn" onclick="clearData()">🗑️ Clear</button>
+            <button class="btn" onclick="exitApp()">🚪 Exit</button>
+        </div>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <h3 id="modalMessage"></h3>
+            <div class="modal-buttons">
+                <button class="btn" onclick="modalYes()">Yes</button>
+                <button class="btn" onclick="modalNo()">No</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let bills = {};
+        let currentAction = null;
+        let totalBill = 0;
+
+        function generateBillNumber() {
+            return Math.floor(1000 + Math.random() * 9000).toString();
+        }
+
+        document.getElementById('billNumber').value = generateBillNumber();
+
+        function calculateTotal() {
+            const sanitizer = parseInt(document.getElementById('sanitizer').value) || 0;
+            const mask = parseInt(document.getElementById('mask').value) || 0;
+            const handGloves = parseInt(document.getElementById('handGloves').value) || 0;
+            const syrup = parseInt(document.getElementById('syrup').value) || 0;
+            const cream = parseInt(document.getElementById('cream').value) || 0;
+            const thermalGun = parseInt(document.getElementById('thermalGun').value) || 0;
+
+            const medicalTotal = (sanitizer * 2) + (mask * 5) + (handGloves * 12) + 
+                                (syrup * 30) + (cream * 5) + (thermalGun * 15);
+            const medicalTax = (medicalTotal * 0.05).toFixed(2);
+
+            document.getElementById('medicalPrice').value = `Rs. ${medicalTotal.toFixed(2)}`;
+            document.getElementById('medicalTax').value = `Rs. ${medicalTax}`;
+
+            const rice = parseInt(document.getElementById('rice').value) || 0;
+            const foodOil = parseInt(document.getElementById('foodOil').value) || 0;
+            const wheat = parseInt(document.getElementById('wheat').value) || 0;
+            const spices = parseInt(document.getElementById('spices').value) || 0;
+            const flour = parseInt(document.getElementById('flour').value) || 0;
+            const maggi = parseInt(document.getElementById('maggi').value) || 0;
+
+            const groceryTotal = (rice * 10) + (foodOil * 10) + (wheat * 10) + 
+                                (spices * 6) + (flour * 8) + (maggi * 5);
+            const groceryTax = (groceryTotal * 0.05).toFixed(2);
+
+            document.getElementById('groceryPrice').value = `Rs. ${groceryTotal.toFixed(2)}`;
+            document.getElementById('groceryTax').value = `Rs. ${groceryTax}`;
+
+            const sprite = parseInt(document.getElementById('sprite').value) || 0;
+            const mineral = parseInt(document.getElementById('mineral').value) || 0;
+            const juice = parseInt(document.getElementById('juice').value) || 0;
+            const coke = parseInt(document.getElementById('coke').value) || 0;
+            const lassi = parseInt(document.getElementById('lassi').value) || 0;
+            const mountainDuo = parseInt(document.getElementById('mountainDuo').value) || 0;
+
+            const coldDrinksTotal = (sprite * 10) + (mineral * 10) + (juice * 10) + 
+                                   (coke * 10) + (lassi * 10) + (mountainDuo * 10);
+            const coldDrinksTax = (coldDrinksTotal * 0.1).toFixed(2);
+
+            document.getElementById('coldDrinksPrice').value = `Rs. ${coldDrinksTotal.toFixed(2)}`;
+            document.getElementById('coldDrinksTax').value = `Rs. ${coldDrinksTax}`;
+
+            totalBill = medicalTotal + parseFloat(medicalTax) + groceryTotal + 
+                       parseFloat(groceryTax) + coldDrinksTotal + parseFloat(coldDrinksTax);
+        }
+
+        function generateBill() {
+            const customerName = document.getElementById('customerName').value.trim();
+            const customerPhone = document.getElementById('customerPhone').value.trim();
+            const billNumber = document.getElementById('billNumber').value;
+
+            if (!customerName || !customerPhone) {
+                alert('Customer Details Are Must');
+                return;
+            }
+
+            calculateTotal();
+
+            const medicalPrice = document.getElementById('medicalPrice').value;
+            const groceryPrice = document.getElementById('groceryPrice').value;
+            const coldDrinksPrice = document.getElementById('coldDrinksPrice').value;
+
+            if (medicalPrice === 'Rs. 0.00' && groceryPrice === 'Rs. 0.00' && coldDrinksPrice === 'Rs. 0.00') {
+                alert('No Product Purchased');
+                return;
+            }
+
+            let billText = `\tWelcome Grocery Retail\n`;
+            billText += `Bill Number: ${billNumber}\n`;
+            billText += `Customer Name: ${customerName}\n`;
+            billText += `Phone Number: ${customerPhone}\n`;
+            billText += `================================\n`;
+            billText += `Products\t\tQTY\t\tPrice\n`;
+            billText += `================================\n`;
+
+            const products = [
+                {name: 'Sanitizer', qty: 'sanitizer', price: 2},
+                {name: 'Mask', qty: 'mask', price: 5},
+                {name: 'Hand Gloves', qty: 'handGloves', price: 12},
+                {name: 'Syrup', qty: 'syrup', price: 30},
+                {name: 'Cream', qty: 'cream', price: 5},
+                {name: 'Thermal Gun', qty: 'thermalGun', price: 15},
+                {name: 'Rice', qty: 'rice', price: 10},
+                {name: 'Food Oil', qty: 'foodOil', price: 10},
+                {name: 'Wheat', qty: 'wheat', price: 10},
+                {name: 'Spices', qty: 'spices', price: 6},
+                {name: 'Flour', qty: 'flour', price: 8},
+                {name: 'Maggi', qty: 'maggi', price: 5},
+                {name: 'Sprite', qty: 'sprite', price: 10},
+                {name: 'Mineral Water', qty: 'mineral', price: 10},
+                {name: 'Juice', qty: 'juice', price: 10},
+                {name: 'Coke', qty: 'coke', price: 10},
+                {name: 'Lassi', qty: 'lassi', price: 10},
+                {name: 'Mountain Duo', qty: 'mountainDuo', price: 10}
+            ];
+
+            products.forEach(product => {
+                const qty = parseInt(document.getElementById(product.qty).value) || 0;
+                if (qty > 0) {
+                    const price = qty * product.price;
+                    billText += ` ${product.name}\t\t${qty}\t\t${price}\n`;
+                }
+            });
+
+            billText += `--------------------------------\n`;
+            billText += ` Medical Tax\t\t\t${document.getElementById('medicalTax').value}\n`;
+            billText += ` Grocery Tax\t\t\t${document.getElementById('groceryTax').value}\n`;
+            billText += ` Cold Drinks Tax\t\t${document.getElementById('coldDrinksTax').value}\n`;
+            billText += `--------------------------------\n`;
+            billText += ` Total Bill:\t\t\tRs. ${totalBill.toFixed(2)}\n`;
+            billText += `================================\n`;
+            billText += `\tThank You! Visit Again`;
+
+            document.getElementById('billContent').textContent = billText;
+            
+            bills[billNumber] = billText;
+            
+            showModal('Do you want to save the bill?', 'save');
+        }
+
+        function searchBill() {
+            const searchNumber = document.getElementById('searchBill').value.trim();
+            if (bills[searchNumber]) {
+                document.getElementById('billContent').textContent = bills[searchNumber];
+            } else {
+                alert('Invalid Bill Number');
+            }
+        }
+
+        function clearData() {
+            showModal('Do you really want to Clear?', 'clear');
+        }
+
+        function exitApp() {
+            showModal('Do you really want to exit?', 'exit');
+        }
+
+        function showModal(message, action) {
+            currentAction = action;
+            document.getElementById('modalMessage').textContent = message;
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        function modalYes() {
+            document.getElementById('modal').style.display = 'none';
+            
+            if (currentAction === 'save') {
+                alert(`Bill no: ${document.getElementById('billNumber').value} Saved Successfully`);
+            } else if (currentAction === 'clear') {
+                document.querySelectorAll('input[type="number"]').forEach(input => {
+                    input.value = 0;
+                });
+                document.getElementById('customerName').value = '';
+                document.getElementById('customerPhone').value = '';
+                document.getElementById('searchBill').value = '';
+                document.getElementById('billNumber').value = generateBillNumber();
+                document.getElementById('medicalPrice').value = 'Rs. 0.0';
+                document.getElementById('medicalTax').value = 'Rs. 0.0';
+                document.getElementById('groceryPrice').value = 'Rs. 0.0';
+                document.getElementById('groceryTax').value = 'Rs. 0.0';
+                document.getElementById('coldDrinksPrice').value = 'Rs. 0.0';
+                document.getElementById('coldDrinksTax').value = 'Rs. 0.0';
+                document.getElementById('billContent').textContent = `\tWelcome Grocery Retail\nBill Number: \nCustomer Name: \nPhone Number: \n================================\nProducts\t\tQTY\t\tPrice`;
+            } else if (currentAction === 'exit') {
+                alert('Thank you for using our Billing Software!');
+                window.close();
+            }
+        }
+
+        function modalNo() {
+            document.getElementById('modal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
